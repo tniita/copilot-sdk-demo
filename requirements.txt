@@ -1,0 +1,3 @@
+# MCP Server Dependencies
+# No external dependencies required for basic MCP implementation
+# using only Python standard library

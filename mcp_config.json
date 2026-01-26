@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "github-copilot-demo": {
+      "command": "python",
+      "args": ["mcp_server.py"],
+      "description": "GitHub Copilot SDK Demo MCP Server with weather tools"
+    }
+  }
+}
