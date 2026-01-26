@@ -1,3 +1,8 @@
-# MCP Server Dependencies
-# No external dependencies required for basic MCP implementation
-# using only Python standard library
+# GitHub Copilot SDK
+# Required for gh.py (Copilot + MCP integration)
+github-copilot-sdk
+
+# Dependencies for Copilot SDK
+pydantic>=2.0.0
+
+# Note: MCP server (mcp_server.py) requires only Python standard library

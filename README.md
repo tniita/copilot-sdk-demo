@@ -7,7 +7,7 @@ This repository demonstrates how to build a GitHub Copilot SDK integration using
 The demo includes:
 - **MCP Server** (`mcp_server.py`): Implements the Model Context Protocol with a weather tool
 - **MCP Client** (`mcp_client.py`): Example client for testing the MCP server
-- **Legacy Demo** (`gh.py`): Original Copilot SDK implementation (for reference)
+- **Copilot SDK + MCP Integration** (`gh.py`): GitHub Copilot SDK that loads tools dynamically from MCP server
 
 ## Model Context Protocol (MCP)
 
@@ -17,9 +17,24 @@ MCP is a standardized protocol for connecting AI assistants to different data so
 - Standard MCP methods: `initialize`, `tools/list`, `tools/call`
 - Weather tool with dynamic city-based queries
 
+### Key Features of the Integration
+
+The `gh.py` implementation provides a **bridge** between GitHub Copilot SDK and MCP servers:
+
+1. **Dynamic Tool Loading**: Automatically discovers and loads tools from any MCP server
+2. **Schema Translation**: Converts MCP tool schemas to Copilot SDK tool definitions
+3. **Bidirectional Communication**: Translates between Copilot SDK calls and MCP protocol
+4. **Type Safety**: Uses Pydantic models for parameter validation
+5. **Extensibility**: Works with any MCP-compliant server without code changes
+
 ## Setup
 
-No external dependencies required! The implementation uses only Python standard library.
+### Prerequisites
+
+1. **Python 3.8+** - Required for async support
+2. **GitHub Copilot SDK** - Required for `gh.py` integration (optional for standalone MCP)
+
+### Installation
 
 ```bash
 # Clone the repository
@@ -29,6 +44,12 @@ cd copilot-sdk-demo
 # Optional: Create virtual environment
 python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install Copilot SDK (required for gh.py)
+pip install github-copilot-sdk
+
+# Or install from requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Usage
@@ -71,6 +92,34 @@ Testing weather tool with various cities:
 
 ...
 ```
+
+### Using with GitHub Copilot SDK
+
+Run the integrated Copilot assistant that loads tools from the MCP server:
+
+```bash
+python3 gh.py
+```
+
+This will:
+1. Start the MCP server automatically
+2. Load all available tools from the MCP server
+3. Create a Copilot session with those tools
+4. Allow you to interact with the assistant
+
+Expected output:
+```
+🚀 Starting GitHub Copilot with MCP Protocol Integration
+
+✓ Loaded 1 tool(s) from MCP server
+🌤️  Weather Assistant with MCP (type 'exit' to quit)
+   Try: 'What's the weather in Paris?' or 'Compare weather in NYC and LA'
+
+You: What's the weather in Paris?
+Assistant: Let me check the weather for you...
+```
+
+### Standalone MCP Server
 
 ### Using with GitHub Copilot
 
@@ -132,6 +181,34 @@ All requests follow JSON-RPC 2.0 format:
 
 ## Architecture
 
+### Copilot SDK + MCP Integration
+
+```
+┌─────────────────────┐
+│  GitHub Copilot SDK │
+│    (gh.py)          │
+├─────────────────────┤
+│  ┌───────────────┐  │
+│  │ MCPToolBridge │  │  ← Dynamically loads tools from MCP
+│  └───────┬───────┘  │
+└──────────┼──────────┘
+           │ MCP Protocol
+           │ (JSON-RPC 2.0)
+           │
+  ┌────────▼────────┐
+  │   MCP Server    │
+  │  (mcp_server.py)│
+  ├─────────────────┤
+  │  ┌───────────┐  │
+  │  │   Tools   │  │
+  │  ├───────────┤  │
+  │  │get_weather│  │
+  │  └───────────┘  │
+  └─────────────────┘
+```
+
+### Standalone MCP Server
+
 ```
 ┌─────────────────┐
 │   AI Assistant  │
@@ -190,11 +267,11 @@ async def _your_tool(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
 
 ## Files
 
-- `mcp_server.py`: MCP server implementation
-- `mcp_client.py`: Test client for the MCP server
-- `mcp_config.json`: Example MCP configuration
-- `gh.py`: Original Copilot SDK demo (legacy)
-- `requirements.txt`: Python dependencies (none required for MCP)
+- `gh.py`: **GitHub Copilot SDK with MCP integration** - Dynamically loads tools from MCP server
+- `mcp_server.py`: **MCP server implementation** - Provides tools via MCP protocol
+- `mcp_client.py`: **Test client** for the MCP server
+- `mcp_config.json`: Example MCP configuration for external clients
+- `requirements.txt`: Python dependencies
 
 ## License
 
