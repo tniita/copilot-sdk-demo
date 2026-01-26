@@ -41,7 +41,7 @@ class InteractiveMCPDemo:
             except subprocess.TimeoutExpired:
                 self.process.kill()
     
-    def send_request(self, method: str, params: Optional[dict] = None) -> dict:
+    async def send_request(self, method: str, params: Optional[dict] = None) -> dict:
         """Send a request and get response"""
         self.request_id += 1
         request = {
@@ -53,11 +53,18 @@ class InteractiveMCPDemo:
             request["params"] = params
         
         # Send
-        self.process.stdin.write(json.dumps(request) + "\n")
-        self.process.stdin.flush()
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(
+            None,
+            lambda: self.process.stdin.write(json.dumps(request) + "\n")
+        )
+        await loop.run_in_executor(None, self.process.stdin.flush)
         
         # Receive
-        response_line = self.process.stdout.readline()
+        response_line = await loop.run_in_executor(
+            None,
+            self.process.stdout.readline
+        )
         return json.loads(response_line)
     
     def print_section(self, title: str):
@@ -87,7 +94,7 @@ class InteractiveMCPDemo:
             }
             print(json.dumps(init_request, indent=2))
             
-            response = self.send_request(
+            response = await self.send_request(
                 "initialize",
                 init_request["params"]
             )
@@ -100,7 +107,7 @@ class InteractiveMCPDemo:
             print("Request:")
             print(json.dumps({"method": "tools/list"}, indent=2))
             
-            response = self.send_request("tools/list")
+            response = await self.send_request("tools/list")
             result = response.get("result", {})
             
             print("\nResponse:")
@@ -123,7 +130,7 @@ class InteractiveMCPDemo:
                 }
                 print(json.dumps(call_request, indent=2))
                 
-                response = self.send_request(
+                response = await self.send_request(
                     "tools/call",
                     call_request["params"]
                 )

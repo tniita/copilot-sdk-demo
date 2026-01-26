@@ -144,17 +144,21 @@ class MCPServer:
         """Run the MCP server using stdio transport"""
         print("MCP Server started. Listening on stdin...", file=sys.stderr)
         
+        # Create async stream readers
+        loop = asyncio.get_event_loop()
+        reader = asyncio.StreamReader()
+        protocol = asyncio.StreamReaderProtocol(reader)
+        await loop.connect_read_pipe(lambda: protocol, sys.stdin)
+        
         while True:
             try:
-                # Read line from stdin
-                line = await asyncio.get_event_loop().run_in_executor(
-                    None, sys.stdin.readline
-                )
+                # Read line from stdin asynchronously
+                line = await reader.readline()
                 
                 if not line:
                     break
                 
-                line = line.strip()
+                line = line.decode('utf-8').strip()
                 if not line:
                     continue
                 
