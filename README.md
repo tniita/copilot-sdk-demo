@@ -1,43 +1,77 @@
-# コード相互レビューエージェント
+# Copilot SDK Demo
 
-**GitHub Copilot SDK** と **MCP Protocol** を使用した、Claude Opus 4.5 × GPT-5.2-codex によるコード相互レビューエージェントです。
+**GitHub Copilot SDK** を使用した Agentic Workflow デモプロジェクトです。
+
+## 🏗️ 全体構成
+
+このリポジトリは以下の2つの主要コンポーネントで構成されています：
+
+```
+copilot-sdk-demo/
+├── agentic-workflow/          # 🤖 Agentic Workflow フレームワーク
+│   ├── src/
+│   │   └── agentic_workflow/
+│   │       ├── agent/         # GitHub Copilot SDK オーケストレーター
+│   │       ├── demos/         # コード相互レビューエージェント デモ
+│   │       └── main.py        # メインエントリーポイント
+│   ├── docs/                  # ドキュメント
+│   └── pyproject.toml         # Python プロジェクト設定
+│
+├── slidev/                    # 📊 プレゼンテーション資料
+│   ├── slides.md              # メインスライド
+│   ├── github-copilot/        # GitHub Copilot テーマ/コンポーネント
+│   ├── public/                # 静的アセット
+│   └── styles/                # スタイルシート
+│
+└── README.md                  # このファイル
+```
+
+### コンポーネント詳細
+
+| コンポーネント | 説明 | 技術スタック |
+|--------------|------|-------------|
+| **agentic-workflow** | GitHub Copilot SDK を使用したマルチエージェントワークフロー | Python, GitHub Copilot SDK, MCP Protocol |
+| **slidev** | GitHub Copilot SDK のプレゼンテーション資料 | Slidev, Vue.js |
+
+### アーキテクチャ図
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                      GitHub Copilot Platform                        │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │                    GitHub Copilot SDK                        │   │
+│  │  ┌─────────────────┐      ┌─────────────────┐               │   │
+│  │  │   GPT-5.2       │      │  Claude Opus 4.5 │               │   │
+│  │  │   (コードレビュー)│◄────►│  (コード生成)    │               │   │
+│  │  └─────────────────┘      └─────────────────┘               │   │
+│  │           ▲                        ▲                         │   │
+│  │           │                        │                         │   │
+│  │           ▼                        ▼                         │   │
+│  │  ┌───────────────────────────────────────────┐              │   │
+│  │  │           AgenticWorkflow                  │              │   │
+│  │  │     (オーケストレーター / セッション管理)    │              │   │
+│  │  └───────────────────────────────────────────┘              │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                              │                                      │
+│                              ▼                                      │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │                    MCP Protocol                              │   │
+│  │         (ツール呼び出し / ファイルシステムアクセス)            │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                    CodeReviewOrchestrator                           │
+│  ┌──────────────────────────────────────────────────────────────┐  │
+│  │ 1. 初期コード生成 → 2. 相互レビュー → 3. 改善 → 4. マージ      │  │
+│  └──────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 ## 📋 概要
 
-2つの最先端LLMモデル（Claude Opus 4.5 と GPT-5.2-codex）が相互にコードをレビューし、最高品質のコードを生成します。
-
-### ワークフロー
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│              コード相互レビューワークフロー                    │
-├─────────────────────────────────────────────────────────────┤
-│                                                              │
-│  Phase 1: 初期コード生成（並列実行）                          │
-│  ┌──────────────────┐    ┌──────────────────┐               │
-│  │  Claude Opus 4.5 │    │  GPT-5.2-codex   │               │
-│  │   コード生成      │    │   コード生成      │               │
-│  └────────┬─────────┘    └────────┬─────────┘               │
-│           │                       │                          │
-│  Phase 2: 相互レビュー（並列実行）                            │
-│           │                       │                          │
-│           ▼                       ▼                          │
-│  ┌──────────────────┐    ┌──────────────────┐               │
-│  │  Claude が GPT   │    │   GPT が Claude  │               │
-│  │  のコードをレビュー│    │  のコードをレビュー│               │
-│  └────────┬─────────┘    └────────┬─────────┘               │
-│           │                       │                          │
-│  Phase 3: 統合                    │                          │
-│           └───────────┬───────────┘                          │
-│                       ▼                                      │
-│              ┌──────────────────┐                            │
-│              │    最終マージ     │                            │
-│              │  両者の良い点を   │                            │
-│              │    統合して出力   │                            │
-│              └──────────────────┘                            │
-│                                                              │
-└─────────────────────────────────────────────────────────────┘
-```
+GitHub Copilot SDK と MCP Protocol を活用して、LLM を使った自律型エージェントワークフローを構築するためのライブラリです。
 
 ## 📁 プロジェクト構造
 
@@ -45,15 +79,16 @@
 agentic-workflow/
 ├── src/
 │   └── agentic_workflow/
-│       ├── agent/                     # エージェントオーケストレーター
-│       │   └── orchestrator.py        # GitHub Copilot SDK ワークフローエンジン
-│       ├── mcp_servers/               # MCPサーバー
-│       │   └── code_review_server.py  # コード相互レビューMCPサーバー
-│       ├── demos/                     # デモスクリプト
-│       │   └── code_review_agent.py   # コード相互レビューエージェント
-│       └── main.py                    # メインエントリーポイント
-├── pyproject.toml
-└── README.md
+│       ├── agent/                  # エージェントオーケストレーター
+│       │   └── orchestrator.py     # GitHub Copilot SDK ワークフローエンジン
+│       ├── demos/                  # デモスクリプト
+│       │   └── code_review_agent.py
+│       ├── async_http_client.py    # 非同期HTTPクライアント
+│       ├── http_client.py          # 同期HTTPクライアント
+│       └── main.py                 # メインエントリーポイント
+├── docs/                           # ドキュメント
+├── examples/                       # サンプルコード
+└── pyproject.toml
 ```
 
 ## 🚀 セットアップ
@@ -79,69 +114,57 @@ pip install -e ".[dev]"
 
 ## 🎯 実行方法
 
+### デモ実行
+
+```bash
+python -m agentic_workflow.demos.code_review_agent
+```
+
 ### 対話モード
 
 ```bash
 python -m agentic_workflow.main
 ```
 
-### デモモード
-
-```bash
-python -m agentic_workflow.main demo
-```
-
-### 直接実行
-
-```bash
-python -m agentic_workflow.demos.code_review_agent
-```
-
 ## 💻 プログラムからの使用
 
+### AgenticWorkflow の基本的な使い方
+
 ```python
-from agentic_workflow.demos.code_review_agent import CodeReviewOrchestrator
+import asyncio
+from agentic_workflow.agent import AgentConfig, AgenticWorkflow
 
-# オーケストレーターを初期化
-orchestrator = CodeReviewOrchestrator(max_review_rounds=2, verbose=True)
+async def main():
+    # エージェント設定
+    config = AgentConfig(
+        name="My Agent",
+        description="タスクを自動実行するエージェント",
+        prompt="あなたは優秀なアシスタントです。",
+        model="gpt-5",  # または "claude-opus-4.5"
+    )
 
-# コード生成リクエスト
-request = """
-Pythonで非同期HTTPクライアントクラスを実装してください:
-- GET/POST/PUT/DELETE メソッドをサポート
-- 自動リトライ機能
-- タイムアウト設定
-"""
+    # ワークフロー作成・実行
+    workflow = AgenticWorkflow(config)
+    await workflow.start()
 
-# 実行
-result = await orchestrator.run(request)
-print(result.code)  # 最終的な高品質コード
+    result = await workflow.run("ファイル一覧を取得してください")
+    print(result.response)
+
+    await workflow.stop()
+
+asyncio.run(main())
 ```
 
-## 🔧 MCPサーバーとして使用
-
-他のエージェントからMCPツールとして呼び出し可能です。
-
-**提供ツール:**
-- `generate_reviewed_code` - 相互レビューによる高品質コード生成
-- `compare_model_outputs` - 両モデルの出力比較
-- `get_review_feedback` - 既存コードへのデュアルレビュー
+### 利用可能なモデル
 
 ```python
-from agentic_workflow.agent import AgentConfig
+from agentic_workflow.agent import AgentPresets
 
-config = AgentConfig(
-    name="Enhanced Agent",
-    prompt="...",
-    mcp_servers={
-        "code_review": {
-            "type": "local",
-            "command": "python",
-            "args": ["./mcp_servers/code_review_server.py"],
-            "tools": ["generate_reviewed_code"],
-        }
-    },
-)
+# モデル定数
+AgentPresets.MODEL_GPT5          # "gpt-5"
+AgentPresets.MODEL_GPT52         # "gpt-5.2-codex"
+AgentPresets.MODEL_CLAUDE_OPUS   # "claude-opus-4.5"
+AgentPresets.MODEL_CLAUDE_SONNET # "claude-sonnet-4"
 ```
 
 ## 🔗 参考リンク

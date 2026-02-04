@@ -5,3 +5,5 @@ slidev/.vscode
 slidev/node_modules
 slidev/dist
 slidev/.temp
+**__pycache__**
+**/*.pyc
