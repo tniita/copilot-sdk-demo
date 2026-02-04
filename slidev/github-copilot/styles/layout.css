@@ -1,0 +1,188 @@
+/* GitHub Copilot Theme */
+:root {
+  /* Copilot color palette */
+  --slidev-theme-primary: #58a6ff;
+  --slidev-theme-accent: #7c3aed;
+  --slidev-theme-pink: #f97583;
+  --slidev-theme-background: #0d1117;
+  --slidev-theme-surface: #161b22;
+  --slidev-theme-text: #c9d1d9;
+  --slidev-theme-heading: #ffffff;
+  --slidev-theme-border: #30363d;
+}
+
+/* Dark mode - ダーク背景を強制 */
+html.dark,
+html:not(.light) {
+  --prism-background: var(--slidev-theme-surface);
+}
+
+/* スライド背景 */
+.slidev-layout {
+  background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1a1f2e 100%);
+  color: var(--slidev-theme-text);
+}
+
+/* 上部アクセントライン */
+.slidev-layout::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #58a6ff, #7c3aed, #f97583, #7c3aed, #58a6ff);
+  background-size: 200% 100%;
+  animation: gradient-slide 3s ease infinite;
+}
+
+@keyframes gradient-slide {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 見出しスタイル - Copilotグラデーション */
+h1 {
+  background: linear-gradient(90deg, #58a6ff, #7c3aed, #f97583);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+}
+
+h2 {
+  color: var(--slidev-theme-heading);
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(90deg, #58a6ff, #7c3aed) 1;
+  padding-bottom: 0.5rem;
+  display: inline-block;
+}
+
+h3, h4, h5, h6 {
+  color: var(--slidev-theme-heading);
+}
+
+/* カバーとイントロレイアウト */
+.slidev-layout.cover,
+.slidev-layout.intro {
+  @apply h-full grid;
+  background: radial-gradient(ellipse at top right, rgba(88, 166, 255, 0.15), transparent 50%),
+              radial-gradient(ellipse at bottom left, rgba(124, 58, 237, 0.15), transparent 50%),
+              linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+
+  h1 {
+    @apply text-6xl leading-20;
+  }
+
+  h1 + p {
+    @apply -mt-2 opacity-70 mb-4;
+    color: var(--slidev-theme-text);
+  }
+
+  p + h2,
+  ul + h2,
+  table + h2 {
+    @apply mt-10;
+  }
+}
+
+/* リンクスタイル */
+a {
+  color: var(--slidev-theme-primary);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  color: var(--slidev-theme-accent);
+  text-decoration: underline;
+}
+
+/* コードブロック */
+pre, .slidev-code {
+  background: var(--slidev-theme-surface) !important;
+  border: 1px solid var(--slidev-theme-border);
+  border-radius: 8px;
+}
+
+/* インラインコード */
+:not(pre) > code {
+  background: rgba(88, 166, 255, 0.15);
+  color: #58a6ff;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+/* 箇条書き */
+ul > li::marker {
+  color: var(--slidev-theme-primary);
+}
+
+ol > li::marker {
+  color: var(--slidev-theme-accent);
+}
+
+/* 引用ブロック */
+blockquote {
+  border-left: 4px solid;
+  border-image: linear-gradient(180deg, #58a6ff, #7c3aed) 1;
+  background: rgba(88, 166, 255, 0.05);
+  padding: 1rem;
+  border-radius: 0 8px 8px 0;
+  color: var(--slidev-theme-text);
+}
+
+/* テーブル */
+table {
+  border-collapse: collapse;
+}
+
+th {
+  background: linear-gradient(90deg, rgba(88, 166, 255, 0.2), rgba(124, 58, 237, 0.2));
+  color: var(--slidev-theme-heading);
+}
+
+td, th {
+  border: 1px solid var(--slidev-theme-border);
+  padding: 0.5rem 1rem;
+}
+
+tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* ユーティリティクラス */
+.copilot-glow {
+  box-shadow: 0 0 40px rgba(88, 166, 255, 0.3),
+              0 0 80px rgba(124, 58, 237, 0.2);
+}
+
+.copilot-gradient-text {
+  background: linear-gradient(90deg, #58a6ff, #7c3aed, #f97583);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.copilot-border {
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: linear-gradient(var(--slidev-theme-surface), var(--slidev-theme-surface)) padding-box,
+              linear-gradient(90deg, #58a6ff, #7c3aed, #f97583) border-box;
+}
+
+.copilot-card {
+  background: var(--slidev-theme-surface);
+  border: 1px solid var(--slidev-theme-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.copilot-card:hover {
+  border-color: var(--slidev-theme-primary);
+  box-shadow: 0 0 20px rgba(88, 166, 255, 0.1);
+}
+
