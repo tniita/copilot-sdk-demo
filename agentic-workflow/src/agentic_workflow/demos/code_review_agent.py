@@ -70,8 +70,8 @@ class CodeReviewOrchestrator:
     """
 
     # GitHub Copilotが提供するモデル
-    CLAUDE_MODEL = "claude-sonnet-4-20250514"
-    GPT_MODEL = "gpt-4.1"
+    CLAUDE_MODEL = "claude-opus-4.6"
+    GPT_MODEL = "gpt-5.2-codex"
 
     def __init__(self, max_review_rounds: int = 2, verbose: bool = True):
         self.max_review_rounds = max_review_rounds

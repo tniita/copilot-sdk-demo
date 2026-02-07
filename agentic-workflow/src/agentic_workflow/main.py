@@ -27,7 +27,7 @@ async def run_interactive() -> None:
         Panel.fit(
             "[bold]╔════════════════════════════════════════════════════════════╗[/bold]\n"
             "[bold]║     🔄 コード相互レビューエージェント - Interactive Mode     ║[/bold]\n"
-            "[bold]║        Claude Opus 4.5 × GPT-5.2-codex                      ║[/bold]\n"
+            "[bold]║        Claude Opus 4.6 × GPT-5.2-codex                      ║[/bold]\n"
             "[bold]╚════════════════════════════════════════════════════════════╝[/bold]",
             border_style="blue",
         )
